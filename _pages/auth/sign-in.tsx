@@ -1,7 +1,10 @@
 'use client';
 
+import { useForm } from 'react-hook-form';
+import { Lock, Mail } from '@/components/icons';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
@@ -13,9 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { Lock, Mail } from '@/components/icons';
-import { Button } from '@/components/ui/button';
 
 const formSchema = z.object({
 	email: z.email(),

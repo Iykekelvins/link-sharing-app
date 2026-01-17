@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { Eye, EyeClosed } from 'lucide-react';
 
 function Input({
 	className,
@@ -8,11 +9,13 @@ function Input({
 	icon,
 	...props
 }: React.ComponentProps<'input'> & { icon?: React.ReactNode }) {
+	const [showPassword, setShowPassword] = React.useState(false);
+
 	return (
 		<div className={cn(icon && 'relative flex items-center')}>
 			<span className='absolute left-4'>{icon && icon}</span>
 			<input
-				type={type}
+				type={type === 'password' && showPassword ? 'text' : type}
 				data-slot='input'
 				className={cn(
 					'file:text-foreground placeholder:opacity-50 selection:bg-purple border-borders',
@@ -26,6 +29,18 @@ function Input({
 				)}
 				{...props}
 			/>
+			{type === 'password' && (
+				<button
+					type='button'
+					className='absolute right-4'
+					onClick={() => setShowPassword(!showPassword)}>
+					{!showPassword ? (
+						<Eye size={16} color='#737373' />
+					) : (
+						<EyeClosed size={16} color='#737373' />
+					)}
+				</button>
+			)}
 		</div>
 	);
 }
