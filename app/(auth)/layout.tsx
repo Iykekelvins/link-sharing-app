@@ -4,11 +4,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<main className='grow flex'>
 			<div
-				className='flex flex-col items-center 
-				justify-center flex-1 px-8'>
+				className='flex flex-col md:items-center 
+				md:justify-center flex-1 p-8'>
 				<Image src='/logo.png' width={182.5} height={40} alt='Devlinks logo' />
 
-				<div className='bg-white max-w-119 w-full mt-12.5 rounded-xl'>
+				<div className='md:bg-white max-w-119 w-full mt-12.5 rounded-xl'>
 					{children}
 				</div>
 			</div>
