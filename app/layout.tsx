@@ -3,6 +3,7 @@ import { Instrument_Sans } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 
 import './globals.css';
+import { Toaster } from 'sonner';
 
 const instrumentSans = Instrument_Sans({
 	variable: '--font-instrument-sans',
@@ -22,7 +23,10 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang='en'>
-				<body className={`${instrumentSans.variable} antialiased`}>{children}</body>
+				<body className={`${instrumentSans.variable} antialiased`}>
+					{children}
+					<Toaster position='top-center' richColors theme='dark' />
+				</body>
 			</html>
 		</ClerkProvider>
 	);
