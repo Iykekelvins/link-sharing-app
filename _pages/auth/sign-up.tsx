@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSignUp } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
 import { Lock, Mail } from '@/components/icons';
@@ -20,10 +21,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { Spinner } from '@/components/ui/spinner';
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
 import { toast } from 'sonner';
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 const formSchema = z
 	.object({
@@ -114,8 +113,8 @@ const SignUp = () => {
 							return;
 						}
 
-						// router.push('/')
-						console.log(session.user);
+						router.push('/');
+						// console.log(session.user);
 					},
 				});
 			} else {
