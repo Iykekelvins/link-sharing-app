@@ -21,6 +21,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { Spinner } from '@/components/ui/spinner';
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 import Link from 'next/link';
 
@@ -112,9 +113,26 @@ const SignUp = () => {
 							console.log(session?.currentTask);
 							return;
 						}
+						const user = session.user;
 
-						router.push('/');
-						// console.log(session.user);
+						const res = await fetch('/api/auth/sign-up', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								email: user?.emailAddresses[0].emailAddress,
+								image_url: user?.imageUrl,
+								clerkId: user?.id,
+							}),
+						});
+
+						if (res.ok) {
+							router.push('/');
+							return;
+						}
+
+						console.log(res);
 					},
 				});
 			} else {
@@ -132,114 +150,117 @@ const SignUp = () => {
 
 	return (
 		<div className='md:p-8'>
-			{!verifying ? (
-				<>
-					<div>
-						<h1 className='text-dark-grey text-[2rem] font-bold'>Create account</h1>
-						<p className='text-grey text-base mt-2'>
-							Let&apos;s get you started sharing your links!
-						</p>
-					</div>
+			<div className={cn(verifying && 'hidden')}>
+				<div>
+					<h1 className='text-dark-grey text-[2rem] font-bold'>Create account</h1>
+					<p className='text-grey text-base mt-2'>
+						Let&apos;s get you started sharing your links!
+					</p>
+				</div>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className='mt-10 space-y-6'>
-							<FormField
-								control={form.control}
-								name='email'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email address</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												placeholder='e.g. iyke@email.com'
-												icon={<Mail />}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name='password'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Create password</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												type='password'
-												placeholder='At least 8 characters'
-												icon={<Lock />}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name='confirmPassword'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Confirm password</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												type='password'
-												placeholder='At least 8 characters'
-												icon={<Lock />}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className='mt-10 space-y-6'>
+						<FormField
+							control={form.control}
+							name='email'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email address</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder='e.g. iyke@email.com'
+											icon={<Mail />}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='password'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Create password</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											type='password'
+											placeholder='At least 8 characters'
+											icon={<Lock />}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='confirmPassword'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Confirm password</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											type='password'
+											placeholder='At least 8 characters'
+											icon={<Lock />}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-							<Button className='w-full' disabled={isLoading}>
-								{isLoading && <Spinner />}
-								Continue
-							</Button>
-						</form>
-					</Form>
-				</>
-			) : (
-				<>
-					<h1 className='text-dark-grey text-[2rem] font-bold'>Input OTP</h1>
-					<Form {...codeForm}>
-						<form
-							onSubmit={codeForm.handleSubmit(onCodeSubmit)}
-							className='mt-4 space-y-6'>
-							<FormField
-								control={codeForm.control}
-								name='code'
-								render={({ field }) => (
-									<FormItem>
-										<FormControl>
-											<InputOTP maxLength={6} {...field} className='w-full'>
-												<InputOTPGroup className='w-full'>
-													<InputOTPSlot index={0} />
-													<InputOTPSlot index={1} />
-													<InputOTPSlot index={2} />
-													<InputOTPSlot index={3} />
-													<InputOTPSlot index={4} />
-													<InputOTPSlot index={5} />
-												</InputOTPGroup>
-											</InputOTP>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button className='w-full' disabled={isLoading}>
-								{isLoading && <Spinner />}
-								Create new account
-							</Button>
-						</form>
-					</Form>
-				</>
-			)}
+						<Button className='w-full' disabled={isLoading}>
+							{isLoading && <Spinner />}
+							Continue
+						</Button>
+					</form>
+				</Form>
+			</div>
+			<div className={cn(!verifying && 'hidden')}>
+				<h1 className='text-dark-grey text-[2rem] font-bold'>Input OTP</h1>
+				<Form {...codeForm}>
+					<form
+						onSubmit={codeForm.handleSubmit(onCodeSubmit)}
+						className='mt-4 space-y-6'>
+						<FormField
+							control={codeForm.control}
+							name='code'
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<InputOTP
+											maxLength={6}
+											value={field.value}
+											onChange={field.onChange}
+											onBlur={field.onBlur}
+											name={field.name}
+											className='w-full'>
+											<InputOTPGroup className='w-full'>
+												<InputOTPSlot index={0} />
+												<InputOTPSlot index={1} />
+												<InputOTPSlot index={2} />
+												<InputOTPSlot index={3} />
+												<InputOTPSlot index={4} />
+												<InputOTPSlot index={5} />
+											</InputOTPGroup>
+										</InputOTP>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button className='w-full' disabled={isLoading}>
+							{isLoading && <Spinner />}
+							Create new account
+						</Button>
+					</form>
+				</Form>
+			</div>
 
 			<p className='text-center text-grey mt-6'>
 				Already have an account?
