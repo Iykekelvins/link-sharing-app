@@ -1,5 +1,5 @@
-const Home = () => {
+const Profile = () => {
 	return <div className='bg-white p-6 rounded-xl'></div>;
 };
 
-export default Home;
+export default Profile;

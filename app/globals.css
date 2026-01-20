@@ -21,6 +21,7 @@
 	--color-light-grey: var(--light-grey);
 	--color-borders: var(--borders);
 	--color-red: var(--red);
+	--breakpoint-des: 75rem;
 }
 
 body {
