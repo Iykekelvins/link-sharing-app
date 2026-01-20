@@ -26,7 +26,7 @@ export default function Navbar() {
 	const router = useRouter();
 
 	return (
-		<header className='p-0 md:p-6'>
+		<header className='p-0 md:p-6 sticky top-0 md:-top-6 z-20'>
 			<nav
 				className={cn(
 					'bg-white flex items-center justify-between',
