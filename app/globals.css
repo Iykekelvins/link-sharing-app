@@ -8,6 +8,7 @@
 	--grey: #737373;
 	--dark-grey: #333333;
 	--light-grey: #fafafa;
+	--grey-placeholder: #eeeeee;
 	--borders: #d9d9d9;
 	--red: #ff3939;
 }
@@ -19,6 +20,7 @@
 	--color-grey: var(--grey);
 	--color-dark-grey: var(--dark-grey);
 	--color-light-grey: var(--light-grey);
+	--color-grey-placeholder: var(--grey-placeholder);
 	--color-borders: var(--borders);
 	--color-red: var(--red);
 	--breakpoint-des: 75rem;

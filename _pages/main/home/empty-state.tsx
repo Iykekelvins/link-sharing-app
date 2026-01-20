@@ -6,7 +6,7 @@ export default function EmptyState() {
 	return (
 		<div
 			className={cn(
-				'bg-light-grey rounded-lg mt-6 py-5 md:py-16 p-5 flex-1 text-center',
+				'bg-light-grey rounded-lg mt-6 p-5 flex-1 text-center',
 				'flex flex-col items-center justify-center',
 			)}>
 			<Image
