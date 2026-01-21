@@ -1,7 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
+import { toast } from 'sonner';
+import { useSignIn } from '@clerk/nextjs';
 import { Lock, Mail } from '@/components/icons';
+import { Spinner } from '@/components/ui/spinner';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -34,8 +40,42 @@ const SignIn = () => {
 		},
 	});
 
+	const { isLoaded, signIn, setActive } = useSignIn();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const router = useRouter();
+
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log('values', values);
+		setIsLoading(true);
+
+		if (!isLoaded) return;
+
+		try {
+			const signInAttempt = await signIn.create({
+				identifier: values.email,
+				password: values.password,
+			});
+
+			if (signInAttempt.status === 'complete') {
+				await setActive({
+					session: signInAttempt.createdSessionId,
+					navigate: async ({ session }) => {
+						if (session?.currentTask) {
+							console.log(session?.currentTask);
+							return;
+						}
+
+						router.push('/');
+					},
+				});
+			}
+		} catch (error) {
+			if (isClerkAPIResponseError(error)) {
+				toast.error(error.message);
+			}
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
@@ -85,7 +125,10 @@ const SignIn = () => {
 						)}
 					/>
 
-					<Button className='w-full'>Login</Button>
+					<Button className='w-full' disabled={isLoading}>
+						{isLoading && <Spinner />}
+						Login
+					</Button>
 				</form>
 			</Form>
 
