@@ -1,6 +1,13 @@
+'use client';
+
+import { useLinkStore } from '@/store/useLinkStore';
 import { cn } from '@/lib/utils';
+import { PREVIEWLIST } from '@/components/preview-list';
+import Link from 'next/link';
 
 export default function Mockup() {
+	const links = useLinkStore((s) => s.links);
+
 	return (
 		<div className='bg-white p-6 rounded-xl hidden des:flex items-center justify-center'>
 			<div
@@ -15,8 +22,25 @@ export default function Mockup() {
 					<div className='bg-grey-placeholder rounded-full h-2 w-18 mt-3.5' />
 				</div>
 
-				<ul className='flex flex-col w-full gap-5 px-9 relative z-2 mt-14'>
+				<ul className='flex flex-col w-full gap-5 px-9 relative z-2 mt-8'>
 					{[...Array(5)].map((_, i) => {
+						if (links[i] && links[i].platform) {
+							const findIcon = PREVIEWLIST.find(
+								(item) => item.platform === links[i].platform,
+							)?.icon;
+
+							return (
+								<li key={i}>
+									<Link
+										href={links[i].url}
+										target='_blank'
+										rel='noopener'
+										className='[&_svg]:w-full'>
+										{findIcon}
+									</Link>
+								</li>
+							);
+						}
 						return (
 							<li key={i}>
 								<div className='h-11 w-full bg-grey-placeholder rounded-lg' />

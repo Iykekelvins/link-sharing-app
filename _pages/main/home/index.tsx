@@ -1,9 +1,15 @@
+'use client';
+
+import { useLinkStore } from '@/store/useLinkStore';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import EmptyState from './empty-state';
+import Link from './link';
 
 const Home = () => {
+	const { links, addLink } = useLinkStore((state) => state);
+
 	return (
 		<div className='bg-white rounded-xl flex flex-col'>
 			<div className='p-6 des:p-10 flex-1 flex flex-col'>
@@ -15,12 +21,30 @@ const Home = () => {
 					world!
 				</p>
 
-				<Button variant={'secondary'} className='mt-10 w-full'>
+				<Button
+					variant={'secondary'}
+					className='mt-10 w-full'
+					disabled={links.length === 14}
+					onClick={() =>
+						addLink({
+							platform: '',
+							url: '',
+							id: crypto.randomUUID(),
+						})
+					}>
 					+ Add new link
 				</Button>
 
 				{/* empty state - no links added */}
-				<EmptyState />
+				{links.length === 0 ? (
+					<EmptyState />
+				) : (
+					<ul className='flex flex-col gap-6 mt-6  overflow-y-auto'>
+						{links.map((link, i) => (
+							<Link key={link.id} index={i + 1} link={link} />
+						))}
+					</ul>
+				)}
 			</div>
 
 			<div
