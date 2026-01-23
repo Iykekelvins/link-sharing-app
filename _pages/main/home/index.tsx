@@ -1,14 +1,55 @@
 'use client';
 
+import { useState } from 'react';
 import { useLinkStore } from '@/store/useLinkStore';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 import EmptyState from './empty-state';
 import Link from './link';
 
 const Home = () => {
 	const { links, addLink } = useLinkStore((state) => state);
+
+	const [errors, setErrors] = useState<ValidationErrors>({});
+
+	const isValidUrl = (url: string): boolean => {
+		if (!url.trim()) return false;
+
+		try {
+			new URL(url);
+			return true;
+		} catch {
+			return false;
+		}
+	};
+
+	const handleSave = () => {
+		const newErrors: ValidationErrors = {};
+
+		links.forEach((item) => {
+			const urlError = !isValidUrl(item.url);
+			const selectError = !item.platform;
+
+			if (urlError || selectError) {
+				newErrors[item.id] = {
+					url: urlError,
+					platform: selectError,
+				};
+			}
+		});
+
+		setErrors(newErrors);
+		toast.warning('Please fill all necessary fields!');
+
+		if (Object.keys(newErrors).length === 0) {
+			// handle saving links to db
+			console.log('Valid items:', links);
+		} else {
+			console.log('Validation errors:', newErrors);
+		}
+	};
 
 	return (
 		<div className='bg-white rounded-xl flex flex-col'>
@@ -41,7 +82,13 @@ const Home = () => {
 				) : (
 					<ul className='flex flex-col gap-6 mt-6  overflow-y-auto'>
 						{links.map((link, i) => (
-							<Link key={link.id} index={i + 1} link={link} />
+							<Link
+								key={link.id}
+								index={i + 1}
+								link={link}
+								errors={errors}
+								setErrors={setErrors}
+							/>
 						))}
 					</ul>
 				)}
@@ -52,7 +99,9 @@ const Home = () => {
 					'border-t border-t-borders border-solid',
 					'flex justify-end py-6 px-6 md:px-0',
 				)}>
-				<Button className='w-full md:w-max min-w-22.5 md:mr-10'>Save</Button>
+				<Button className='w-full md:w-max min-w-22.5 md:mr-10' onClick={handleSave}>
+					Save
+				</Button>
 			</div>
 		</div>
 	);

@@ -3,10 +3,15 @@
 import { useLinkStore } from '@/store/useLinkStore';
 import { cn } from '@/lib/utils';
 import { PREVIEWLIST } from '@/components/preview-list';
+import { useUser } from '@clerk/nextjs';
+
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Mockup() {
 	const links = useLinkStore((s) => s.links);
+
+	const user = useUser();
 
 	return (
 		<div className='bg-white p-6 rounded-xl hidden des:flex items-center justify-center'>
@@ -17,9 +22,25 @@ export default function Mockup() {
 					'relative',
 				)}>
 				<div className='flex flex-col items-center relative z-2'>
-					<div className='bg-grey-placeholder rounded-full size-24' />
-					<div className='bg-grey-placeholder rounded-full h-4 w-40 mt-6' />
+					{!user?.user?.imageUrl ? (
+						<div className='bg-grey-placeholder rounded-full size-24' />
+					) : (
+						<Image
+							src={user.user.imageUrl}
+							width={96}
+							height={96}
+							alt={user.user.firstName || ''}
+							className='rounded-full'
+						/>
+					)}
 					<div className='bg-grey-placeholder rounded-full h-2 w-18 mt-3.5' />
+					{!user?.user?.emailAddresses[0].emailAddress ? (
+						<div className='bg-grey-placeholder rounded-full h-4 w-40 mt-6' />
+					) : (
+						<p className='text-grey text-sm mt-3.5'>
+							{user?.user?.emailAddresses[0].emailAddress}
+						</p>
+					)}
 				</div>
 
 				<ul className='flex flex-col w-full gap-5 px-9 relative z-2 mt-8'>
@@ -33,6 +54,7 @@ export default function Mockup() {
 								<li key={i}>
 									<Link
 										href={links[i].url}
+										prefetch={false}
 										target='_blank'
 										rel='noopener'
 										className='[&_svg]:w-full'>

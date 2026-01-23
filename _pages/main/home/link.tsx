@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link as LinkProp, useLinkStore } from '@/store/useLinkStore';
 import { cn } from '@/lib/utils';
 import {
@@ -11,24 +11,76 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { MENULIST } from '@/components/menu-list';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
-export default function Link({ index, link }: { index: number; link: LinkProp }) {
+export default function Link({
+	index,
+	link,
+	errors,
+	setErrors,
+}: {
+	index: number;
+	link: LinkProp;
+	errors: ValidationErrors;
+	setErrors: (e: ValidationErrors) => void;
+}) {
 	const { links, updateLink, removeLink } = useLinkStore((state) => state);
 
 	const [openDropdown, setOpenDropdown] = useState(false);
-	const [selectedPlatform, setSelectedPlatform] = useState(link.platform ?? '');
-	const [url, setUrl] = useState(link.url ?? '');
 
 	const isPlatformAdded = (platform: string) =>
 		links.find((link) => link.platform !== '' && link.platform === platform) !==
 		undefined;
 
-	useEffect(() => {
+	const handleInputChange = (
+		id: string,
+		field: 'url' | 'platform',
+		value: string,
+	) => {
 		updateLink(link.id, {
-			platform: selectedPlatform,
-			url,
+			[field]: value,
 		});
-	}, [link.id, selectedPlatform, updateLink, url]);
+
+		if (errors[link.id] && value.trim() !== '') {
+			setErrors({
+				...errors,
+				[id]: {
+					...errors[id],
+					[field === 'url' ? 'url' : 'platform']: false,
+				},
+			});
+		}
+	};
+
+	const isValidUrl = (url: string): boolean => {
+		if (!url.trim()) return false;
+
+		try {
+			new URL(url);
+			return true;
+		} catch {
+			return false;
+		}
+	};
+
+	const handleBlur = (id: string, field: 'url' | 'platform', value: string) => {
+		// Re-validate on blur if field is empty or invalid
+		if (errors[id]) {
+			const isUrlField = field === 'url';
+			const hasError = isUrlField ? !isValidUrl(value) : !value;
+
+			if (hasError) {
+				setErrors({
+					...errors,
+					[id]: {
+						...errors[id],
+						[isUrlField ? 'url' : 'select']: true,
+					},
+				});
+			}
+		}
+	};
 
 	return (
 		<li className='bg-light-grey p-5 rounded-xl'>
@@ -61,13 +113,15 @@ export default function Link({ index, link }: { index: number; link: LinkProp })
 				<Select
 					open={openDropdown}
 					onOpenChange={setOpenDropdown}
-					value={selectedPlatform}
-					onValueChange={(value) => setSelectedPlatform(value)}>
+					value={link.platform}
+					onValueChange={(e) => handleInputChange(link.id, 'platform', e)}>
 					<SelectTrigger
 						className={cn(
 							'w-full mt-1',
 							openDropdown && 'border-purple shadow-[0px_0px_32px_0px_#633CFF40]',
-						)}>
+						)}
+						onBlur={(e) => handleBlur(link.id, 'platform', e.target.value)}
+						aria-invalid={errors[link.id]?.platform}>
 						<SelectValue placeholder='Select platform' />
 					</SelectTrigger>
 					<SelectContent
@@ -92,6 +146,31 @@ export default function Link({ index, link }: { index: number; link: LinkProp })
 						))}
 					</SelectContent>
 				</Select>
+				{errors[link.id]?.platform && (
+					<span className='text-xs text-red'>can&apos;t be empty</span>
+				)}
+
+				<div className='mt-3'>
+					<Label
+						className={`text-dark-grey text-xs ${errors[link.id]?.url ? 'text-red' : ''}`}
+						htmlFor={`link-${index}`}>
+						Link
+					</Label>
+					<Input
+						name={`link-${index}`}
+						id={`link-${index}`}
+						value={link.url}
+						onChange={(e) => handleInputChange(link.id, 'url', e.target.value)}
+						onBlur={(e) => handleBlur(link.id, 'url', e.target.value)}
+						className='mt-1'
+						aria-invalid={errors[link.id]?.url}
+					/>
+					{errors[link.id]?.url && (
+						<span className='text-xs text-red'>
+							{errors[link.id].url && !link.url ? "can't be empty" : 'invalid url'}
+						</span>
+					)}
+				</div>
 			</div>
 		</li>
 	);
