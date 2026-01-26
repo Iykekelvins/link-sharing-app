@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSignUp } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
+import { useUserStore } from '@/store/useUserStore';
 import { Lock, Mail } from '@/components/icons';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -68,6 +69,7 @@ const SignUp = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const router = useRouter();
+	const setUser = useUserStore((s) => s.setUser);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsLoading(true);
@@ -127,12 +129,21 @@ const SignUp = () => {
 							}),
 						});
 
-						if (res.ok) {
-							router.push('/');
-							return;
-						}
+						const data = await res.json();
 
-						console.log(res);
+						setUser({
+							clerkId: data.user.clerkId,
+							email: data.user.email,
+							username: data.user.username ?? null,
+							firstName: data.user.firstName ?? '',
+							lastName: data.user.lastName ?? '',
+							image_url: data.user.image_url ?? '',
+							updatedAt: data.user.updatedAt,
+						});
+
+						if (res.ok) {
+							router.refresh();
+						}
 					},
 				});
 			} else {

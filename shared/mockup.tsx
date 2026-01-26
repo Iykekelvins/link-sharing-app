@@ -1,9 +1,10 @@
 'use client';
 
 import { useLinkStore } from '@/store/useLinkStore';
+import { useUserStore } from '@/store/useUserStore';
+import { useUser } from '@clerk/nextjs';
 import { cn } from '@/lib/utils';
 import { PREVIEWLIST } from '@/components/preview-list';
-import { useUser } from '@clerk/nextjs';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,7 +12,8 @@ import Image from 'next/image';
 export default function Mockup() {
 	const links = useLinkStore((s) => s.links);
 
-	const user = useUser();
+	const user = useUserStore((s) => s.user);
+	const clerkUser = useUser();
 
 	return (
 		<div className='bg-white p-6 rounded-xl hidden des:flex items-center justify-center'>
@@ -22,24 +24,33 @@ export default function Mockup() {
 					'relative',
 				)}>
 				<div className='flex flex-col items-center relative z-2'>
-					{!user?.user?.imageUrl ? (
-						<div className='bg-grey-placeholder rounded-full size-24' />
-					) : (
+					{user && (
 						<Image
-							src={user.user.imageUrl}
+							src={
+								!user.image_url ? clerkUser.user?.imageUrl || '' : user?.image_url
+							}
 							width={96}
 							height={96}
-							alt={user.user.firstName || ''}
+							alt={
+								user.firstName
+									? `${user?.firstName} ${user?.lastName} profile picture`
+									: ''
+							}
 							className='rounded-full'
 						/>
 					)}
-					<div className='bg-grey-placeholder rounded-full h-2 w-18 mt-3.5' />
-					{!user?.user?.emailAddresses[0].emailAddress ? (
+
+					{!user?.firstName && !user?.lastName ? (
+						<div className='bg-grey-placeholder rounded-full h-2 w-18 mt-3.5' />
+					) : (
+						<h3 className='text-dark-grey text-[1.125rem] font-semibold mt-3.5'>
+							{`${user?.firstName} ${user?.lastName}`}
+						</h3>
+					)}
+					{!user?.email ? (
 						<div className='bg-grey-placeholder rounded-full h-4 w-40 mt-6' />
 					) : (
-						<p className='text-grey text-sm mt-3.5'>
-							{user?.user?.emailAddresses[0].emailAddress}
-						</p>
+						<p className='text-grey text-sm mt-1'>{user?.email}</p>
 					)}
 				</div>
 

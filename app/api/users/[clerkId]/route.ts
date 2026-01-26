@@ -144,7 +144,7 @@ export async function PATCH(
 				firstName: validatedData.firstName,
 				lastName: validatedData.lastName,
 				username: validatedData.username,
-				profilePicture: profilePictureUrl,
+				image_url: profilePictureUrl,
 				updatedAt: new Date(),
 			},
 			{ new: true },
@@ -166,7 +166,7 @@ export async function PATCH(
 					username: updatedUser.username,
 					firstName: updatedUser.firstName,
 					lastName: updatedUser.lastName,
-					profilePicture: updatedUser.profilePicture,
+					image_url: updatedUser.image_url,
 					updatedAt: updatedUser.updatedAt,
 				},
 			},
@@ -199,5 +199,48 @@ export async function PATCH(
 			},
 			{ status: 500 },
 		);
+	}
+}
+
+export async function GET(
+	req: NextRequest,
+	props: { params: Promise<{ clerkId: string }> },
+) {
+	try {
+		const { userId } = await auth();
+
+		const params = await props.params;
+		const clerkId = params.clerkId;
+
+		if (!userId) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		await connectDB();
+
+		const user = await User.findOne({ clerkId });
+
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		return NextResponse.json(
+			{
+				user: {
+					clerkId: user.clerkId,
+					email: user.email,
+					username: user.username,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					image_url: user.image_url,
+					createdAt: user.createdAt,
+					updatedAt: user.updatedAt,
+				},
+			},
+			{ status: 200 },
+		);
+	} catch (error) {
+		console.error('Error fetching user:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 	}
 }

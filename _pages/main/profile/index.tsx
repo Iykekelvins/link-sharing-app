@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
+import { useUserStore } from '@/store/useUserStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,9 @@ const Profile = () => {
 		},
 	});
 
-	const user = useUser();
+	const clerkUser = useUser();
+	const user = useUserStore((s) => s.user);
+	const setUser = useUserStore((s) => s.setUser);
 
 	const [isUpdating, setIsUpdating] = useState(false);
 
@@ -45,22 +48,21 @@ const Profile = () => {
 				formData.append('profilePicture', values.profilePicture);
 			}
 
-			const res = await fetch(`/api/users/${user.user?.id}`, {
+			const res = await fetch(`/api/users/${clerkUser.user?.id}`, {
 				method: 'PATCH',
 				body: formData,
 			});
 
 			const result = await res.json();
 
-			console.log(result);
-
 			if (res.ok) {
-				toast.success('Profile updated successfully');
+				toast.success(result.message);
+				setUser(result?.user);
 			} else {
 				toast.error(result.message || result.error);
 			}
 
-			await user.user?.reload();
+			await clerkUser.user?.reload();
 		} catch (error) {
 			handleError(error);
 		} finally {
@@ -69,16 +71,15 @@ const Profile = () => {
 	}
 
 	const userData = useMemo(() => {
-		if (!user.user) return null;
+		if (!clerkUser.user) return null;
 
 		return {
-			firstName: user.user.firstName ?? '',
-			lastName: user.user.lastName ?? '',
-			username: user.user.username ?? '',
-			email: user.user.emailAddresses[0]?.emailAddress ?? '',
-			profilePicture: user.user.imageUrl,
+			firstName: clerkUser.user.firstName ?? '',
+			lastName: clerkUser.user.lastName ?? '',
+			username: clerkUser.user.username ?? '',
+			profilePicture: user?.image_url ?? clerkUser.user.imageUrl ?? '',
 		};
-	}, [user.user]);
+	}, [clerkUser.user, user]);
 
 	useEffect(() => {
 		if (userData) {

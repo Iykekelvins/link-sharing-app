@@ -43,7 +43,7 @@ export default function ProfilePicture({ form }: { form: UseFormReturn<FormData>
 										<div className='relative w-full h-full'>
 											<Image
 												src={
-													!value.toString().includes('img.clerk.com')
+													!value.toString().includes('.com')
 														? URL.createObjectURL(value as Blob)
 														: value.toString()
 												}

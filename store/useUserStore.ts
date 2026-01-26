@@ -9,7 +9,7 @@ export interface User {
 	username: string;
 	firstName: string;
 	lastName: string;
-	profilePicture: string | null;
+	image_url: string | null;
 	updatedAt: string;
 }
 

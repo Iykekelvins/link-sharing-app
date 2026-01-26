@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/useUserStore';
 import { useForm } from 'react-hook-form';
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
 import { toast } from 'sonner';
@@ -44,6 +45,7 @@ const SignIn = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const router = useRouter();
+	const setUser = useUserStore((s) => s.setUser);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsLoading(true);
@@ -65,12 +67,29 @@ const SignIn = () => {
 							return;
 						}
 
-						router.push('/');
+						const res = await fetch(`/api/users/${session.user?.id}`);
+						const data = await res.json();
+
+						setUser(data.user);
+						router.refresh();
 					},
 				});
 			}
 		} catch (error) {
 			if (isClerkAPIResponseError(error)) {
+				console.log(error);
+
+				const isIncorrectPassword = error.errors?.some(
+					(e) =>
+						e.code === 'authentication_invalid_credentials' ||
+						e.longMessage?.includes('password'),
+				);
+
+				if (isIncorrectPassword) {
+					toast.error('Invalid credentials. Check email and password again.');
+					return;
+				}
+
 				toast.error(error.message);
 			}
 		} finally {
