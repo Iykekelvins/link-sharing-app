@@ -1,9 +1,6 @@
 'use client';
 
 import { UseFormReturn } from 'react-hook-form';
-
-import userProfileSchema from './schema';
-import z from 'zod';
 import {
 	FormControl,
 	FormField,
@@ -13,6 +10,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import userProfileSchema from './schema';
+import z from 'zod';
+
 type FormData = z.infer<typeof userProfileSchema>;
 
 export default function Inputs({ form }: { form: UseFormReturn<FormData> }) {
@@ -20,7 +20,7 @@ export default function Inputs({ form }: { form: UseFormReturn<FormData> }) {
 		<div className='bg-light-grey mt-10 rounded-xl p-5 space-y-3'>
 			<FormField
 				control={form.control}
-				name='first_name'
+				name='firstName'
 				render={({ field }) => (
 					<FormItem className='grid items-center md:grid-cols-[0.5fr_1fr]'>
 						<FormLabel className='text-base text-grey'>First name*</FormLabel>
@@ -35,7 +35,7 @@ export default function Inputs({ form }: { form: UseFormReturn<FormData> }) {
 			/>
 			<FormField
 				control={form.control}
-				name='last_name'
+				name='lastName'
 				render={({ field }) => (
 					<FormItem className='grid items-center md:grid-cols-[0.5fr_1fr]'>
 						<FormLabel className='text-base text-grey'>Last name*</FormLabel>
@@ -48,15 +48,16 @@ export default function Inputs({ form }: { form: UseFormReturn<FormData> }) {
 					</FormItem>
 				)}
 			/>
+
 			<FormField
 				control={form.control}
-				name='email'
+				name='username'
 				render={({ field }) => (
 					<FormItem className='grid items-center md:grid-cols-[0.5fr_1fr]'>
-						<FormLabel className='text-base text-grey'>Email</FormLabel>
+						<FormLabel className='text-base text-grey'>Username</FormLabel>
 						<div>
 							<FormControl>
-								<Input {...field} placeholder='e.g. email@example.com' />
+								<Input {...field} placeholder='e.g. johndoe123' />
 							</FormControl>
 							<FormMessage />
 						</div>

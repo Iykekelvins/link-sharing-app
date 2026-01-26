@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
 
 		// Create new user
 		const newUser = await User.create({
-			first_name: '',
-			last_name: '',
+			firstName: '',
+			lastName: '',
 			username: null,
 			email,
 			image_url: image_url || '',
