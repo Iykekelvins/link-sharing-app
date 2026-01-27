@@ -55,6 +55,7 @@ const Home = () => {
 				const linksToSave = links.map((link) => ({
 					platform: link.platform,
 					url: link.url,
+					id: link.id,
 				}));
 
 				const response = await fetch('/api/links', {
@@ -67,6 +68,7 @@ const Home = () => {
 
 				if (!response.ok) {
 					toast.error('Failed to save links');
+					return;
 				}
 
 				const data = await response.json();
@@ -79,8 +81,6 @@ const Home = () => {
 			} finally {
 				setIsLoading(false);
 			}
-
-			console.log('Valid items:', links);
 		} else {
 			console.log('Validation errors:', newErrors);
 		}

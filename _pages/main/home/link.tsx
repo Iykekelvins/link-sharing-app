@@ -38,11 +38,11 @@ export default function Link({
 		field: 'url' | 'platform',
 		value: string,
 	) => {
-		updateLink(link.id, {
+		updateLink(link.id as string, {
 			[field]: value,
 		});
 
-		if (errors[link.id] && value.trim() !== '') {
+		if (link.id && errors[link.id] && value.trim() !== '') {
 			setErrors({
 				...errors,
 				[id]: {
@@ -103,7 +103,7 @@ export default function Link({
 						'text-grey text-base hover:text-purple',
 						'transition-colors duration-300 ease-in-out',
 					)}
-					onClick={() => removeLink(link.id)}>
+					onClick={() => removeLink(link.id as string)}>
 					Remove
 				</button>
 			</div>
@@ -114,14 +114,14 @@ export default function Link({
 					open={openDropdown}
 					onOpenChange={setOpenDropdown}
 					value={link.platform}
-					onValueChange={(e) => handleInputChange(link.id, 'platform', e)}>
+					onValueChange={(e) => handleInputChange(link.id as string, 'platform', e)}>
 					<SelectTrigger
 						className={cn(
 							'w-full mt-1',
 							openDropdown && 'border-purple shadow-[0px_0px_32px_0px_#633CFF40]',
 						)}
-						onBlur={(e) => handleBlur(link.id, 'platform', e.target.value)}
-						aria-invalid={errors[link.id]?.platform}>
+						onBlur={(e) => handleBlur(link.id as string, 'platform', e.target.value)}
+						aria-invalid={errors[link.id as string]?.platform}>
 						<SelectValue placeholder='Select platform' />
 					</SelectTrigger>
 					<SelectContent
@@ -146,13 +146,13 @@ export default function Link({
 						))}
 					</SelectContent>
 				</Select>
-				{errors[link.id]?.platform && (
+				{errors[link.id as string]?.platform && (
 					<span className='text-xs text-red'>can&apos;t be empty</span>
 				)}
 
 				<div className='mt-3'>
 					<Label
-						className={`text-dark-grey text-xs ${errors[link.id]?.url ? 'text-red' : ''}`}
+						className={`text-dark-grey text-xs ${errors[link.id as string]?.url ? 'text-red' : ''}`}
 						htmlFor={`link-${index}`}>
 						Link
 					</Label>
@@ -160,14 +160,18 @@ export default function Link({
 						name={`link-${index}`}
 						id={`link-${index}`}
 						value={link.url}
-						onChange={(e) => handleInputChange(link.id, 'url', e.target.value)}
-						onBlur={(e) => handleBlur(link.id, 'url', e.target.value)}
+						onChange={(e) =>
+							handleInputChange(link.id as string, 'url', e.target.value)
+						}
+						onBlur={(e) => handleBlur(link.id as string, 'url', e.target.value)}
 						className='mt-1'
-						aria-invalid={errors[link.id]?.url}
+						aria-invalid={errors[link.id as string]?.url}
 					/>
-					{errors[link.id]?.url && (
+					{errors[link.id as string]?.url && (
 						<span className='text-xs text-red'>
-							{errors[link.id].url && !link.url ? "can't be empty" : 'invalid url'}
+							{errors[link.id as string].url && !link.url
+								? "can't be empty"
+								: 'invalid url'}
 						</span>
 					)}
 				</div>

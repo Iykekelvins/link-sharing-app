@@ -24,8 +24,7 @@ export async function POST(request: NextRequest) {
 		await Link.deleteMany({ userClerkId: userId });
 
 		const linkDocuments = links.map((link, index) => ({
-			platform: link.platform,
-			url: link.url,
+			...link,
 			userClerkId: userId,
 			order: index,
 		}));
