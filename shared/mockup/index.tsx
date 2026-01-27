@@ -13,7 +13,7 @@ export default async function Mockup() {
 	const serializedLinks = JSON.parse(JSON.stringify(links));
 
 	return (
-		<div className='bg-white p-6 rounded-xl hidden des:flex items-center justify-center'>
+		<div className='bg-white p-6 rounded-xl hidden des:flex items-start justify-center'>
 			<MockupChildren links={serializedLinks} />
 		</div>
 	);

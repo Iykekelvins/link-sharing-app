@@ -2,6 +2,20 @@
 
 import { useState } from 'react';
 import { useLinkStore } from '@/store/useLinkStore';
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+	DragEndEvent,
+} from '@dnd-kit/core';
+import {
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
@@ -9,9 +23,10 @@ import { toast } from 'sonner';
 
 import EmptyState from './empty-state';
 import Link from './link';
+import { AnimatePresence } from 'framer-motion';
 
 const Home = () => {
-	const { links, addLink, setLinks } = useLinkStore((state) => state);
+	const { links, addLink, setLinks, reorderLinks } = useLinkStore((state) => state);
 
 	const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -86,6 +101,37 @@ const Home = () => {
 		}
 	};
 
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
+
+	const handleDragEnd = async (event: DragEndEvent) => {
+		const { active, over } = event;
+
+		if (over && active.id !== over.id) {
+			reorderLinks(active.id as string, over.id as string);
+
+			const freshLinks = useLinkStore.getState().links;
+
+			const linksToSave = freshLinks.map((link) => ({
+				platform: link.platform,
+				url: link.url,
+				id: link.id,
+			}));
+
+			await fetch('/api/links', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ links: linksToSave }),
+			});
+		}
+	};
+
 	return (
 		<div className='bg-white rounded-xl flex flex-col'>
 			<div className='p-6 des:p-10 flex-1 flex flex-col'>
@@ -115,17 +161,28 @@ const Home = () => {
 				{links.length === 0 ? (
 					<EmptyState />
 				) : (
-					<ul className='flex flex-col gap-6 mt-6  overflow-y-auto'>
-						{links.map((link, i) => (
-							<Link
-								key={link.id || link._id}
-								index={i + 1}
-								link={link}
-								errors={errors}
-								setErrors={setErrors}
-							/>
-						))}
-					</ul>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={handleDragEnd}>
+						<SortableContext
+							items={links.map((link) => link.id as string)}
+							strategy={verticalListSortingStrategy}>
+							<ul className='flex flex-col gap-6 mt-6  overflow-hidden'>
+								<AnimatePresence mode='popLayout'>
+									{links.map((link, i) => (
+										<Link
+											key={link.id || link._id}
+											index={i + 1}
+											link={link}
+											errors={errors}
+											setErrors={setErrors}
+										/>
+									))}
+								</AnimatePresence>
+							</ul>
+						</SortableContext>
+					</DndContext>
 				)}
 			</div>
 
