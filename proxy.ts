@@ -7,11 +7,13 @@ const isPublicRoute = createRouteMatcher([
 	'/profile(.*)',
 ]);
 
+const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)']);
+
 export default clerkMiddleware(async (auth, req) => {
 	const { userId } = await auth();
 
 	// If user is logged in and trying to access auth pages, redirect to homepage
-	if (userId && isPublicRoute(req)) {
+	if (userId && isAuthRoute(req)) {
 		return NextResponse.redirect(new URL('/', req.url));
 	}
 

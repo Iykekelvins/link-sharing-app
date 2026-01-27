@@ -8,7 +8,7 @@ import { User, useUserStore } from '@/store/useUserStore';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const Preview = ({ user, links }: { user: User; links: LinkProps[] }) => {
+const Preview = ({ user, links }: { user?: User; links?: LinkProps[] }) => {
 	const storeUser = useUserStore((s) => s.user);
 	const storeLinks = useLinkStore((s) => s.links);
 

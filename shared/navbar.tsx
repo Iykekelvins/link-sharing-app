@@ -43,14 +43,14 @@ export default function Navbar() {
 						width={146}
 						height={32}
 						alt='devlinks logo'
-						className='hidden md:block'
+						className='hidden sm:block'
 					/>
 					<Image
 						src='/mobile-logo.png'
 						width={32}
 						height={32}
 						alt='devlinks logo'
-						className='md:hidden'
+						className='sm:hidden'
 					/>
 				</Link>
 

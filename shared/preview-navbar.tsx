@@ -1,17 +1,26 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useUserStore } from '@/store/useUserStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PreviewNavbar() {
-	const pathname = usePathname();
+	const user = useUserStore((s) => s.user);
+
+	const isDevelopment = process.env.NODE_ENV === 'development';
 
 	const handleLinkCopy = () => {
-		if (pathname === '/preview') return;
+		if (isDevelopment) {
+			navigator.clipboard.writeText(
+				`http://localhost:3000/profile/${user?.username}`,
+			);
+			toast.success('Link copied to clipboard!');
+			return;
+		}
 
 		navigator.clipboard.writeText(window.location.href);
 		toast.success('Link copied to clipboard!');
@@ -26,9 +35,28 @@ export default function PreviewNavbar() {
 						'p-4 sm:rounded-xl',
 					)}>
 					<Link href='/' className='w-full sm:w-max block'>
-						<Button variant='secondary' className='w-full'>
-							Back to Editor
-						</Button>
+						{!isDevelopment ? (
+							<Button variant='secondary' className='w-full'>
+								Back to Editor
+							</Button>
+						) : (
+							<>
+								<Image
+									src='/logo.png'
+									width={146}
+									height={32}
+									alt='devlinks logo'
+									className='hidden sm:block'
+								/>
+								<Image
+									src='/mobile-logo.png'
+									width={32}
+									height={32}
+									alt='devlinks logo'
+									className='sm:hidden'
+								/>
+							</>
+						)}
 					</Link>
 					<Button className='w-1/2 sm:w-max' onClick={handleLinkCopy}>
 						Share Link
