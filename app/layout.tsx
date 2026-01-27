@@ -29,7 +29,7 @@ export default function RootLayout({
 			<html lang='en'>
 				<body className={`${instrumentSans.variable} antialiased`}>
 					{children}
-					<Toaster position='top-center' richColors theme='dark' />
+					<Toaster position='bottom-center' richColors theme='dark' />
 				</body>
 			</html>
 		</ClerkProvider>
