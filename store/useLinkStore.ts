@@ -4,7 +4,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface Link {
-	id: string;
+	id?: string;
+	_id?: string;
+	userClerkId?: string;
 	platform: string;
 	url: string;
 }
