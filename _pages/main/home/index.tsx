@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useLinkStore } from '@/store/useLinkStore';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 import EmptyState from './empty-state';
 import Link from './link';
-import { Spinner } from '@/components/ui/spinner';
 
 const Home = () => {
 	const { links, addLink, setLinks } = useLinkStore((state) => state);

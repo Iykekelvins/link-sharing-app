@@ -13,6 +13,7 @@ import {
 import { MENULIST } from '@/components/menu-list';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import DeleteLinkModal from '@/components/delete-link-modal';
 
 export default function Link({
 	index,
@@ -28,6 +29,7 @@ export default function Link({
 	const { links, updateLink, removeLink } = useLinkStore((state) => state);
 
 	const [openDropdown, setOpenDropdown] = useState(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	const isPlatformAdded = (platform: string) =>
 		links.find((link) => link.platform !== '' && link.platform === platform) !==
@@ -98,14 +100,22 @@ export default function Link({
 					<h2 className='text-grey text-base font-bold'>Link #{index}</h2>
 				</button>
 
-				<button
-					className={cn(
-						'text-grey text-base hover:text-purple',
-						'transition-colors duration-300 ease-in-out',
-					)}
-					onClick={() => removeLink(link.id as string)}>
-					Remove
-				</button>
+				{!link.id ? (
+					<button
+						className={cn(
+							'text-grey text-base hover:text-purple',
+							'transition-colors duration-300 ease-in-out',
+						)}
+						onClick={() => removeLink(link.id as string)}>
+						Remove
+					</button>
+				) : (
+					<DeleteLinkModal
+						id={link._id!}
+						openDeleteModal={openDeleteModal}
+						setOpenDeleteModal={setOpenDeleteModal}
+					/>
+				)}
 			</div>
 
 			<div className='mt-3'>
