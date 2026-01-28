@@ -27,8 +27,13 @@ const LINKS = [
 export default function Navbar() {
 	const pathname = usePathname();
 	const router = useRouter();
+	const clearUser = useUserStore((s) => s.clearUser);
 
-	const logout = useUserStore((s) => s.clearUser);
+	const logout = () => {
+		setTimeout(() => {
+			clearUser();
+		}, 3000);
+	};
 
 	return (
 		<header className='p-0 md:p-6 sticky top-0 md:-top-6 z-20'>

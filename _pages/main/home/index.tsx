@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLinkStore } from '@/store/useLinkStore';
 import {
 	DndContext,
@@ -16,16 +16,19 @@ import {
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { User, useUserStore } from '@/store/useUserStore';
 
 import EmptyState from './empty-state';
 import Link from './link';
-import { AnimatePresence } from 'framer-motion';
 
-const Home = () => {
+const Home = ({ user }: { user: User }) => {
+	const setUser = useUserStore((s) => s.setUser);
+
 	const { links, addLink, setLinks, reorderLinks } = useLinkStore((state) => state);
 
 	const [errors, setErrors] = useState<ValidationErrors>({});
@@ -131,6 +134,12 @@ const Home = () => {
 			});
 		}
 	};
+
+	useEffect(() => {
+		if (user) {
+			setUser(user);
+		}
+	}, [user, setUser]);
 
 	return (
 		<div className='bg-white rounded-xl flex flex-col'>

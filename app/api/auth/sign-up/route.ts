@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 	try {
 		await connectDB();
 
-		const { email, image_url, clerkId } = await req.json();
+		const { firstName, lastName, email, image_url, clerkId } = await req.json();
 
 		if (!email || !clerkId) {
 			return NextResponse.json(
@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
 			email,
 			image_url: image_url || '',
 			clerkId,
+			firstName,
+			lastName,
 		});
 
 		return NextResponse.json(
