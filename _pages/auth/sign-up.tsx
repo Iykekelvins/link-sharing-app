@@ -64,6 +64,7 @@ const SignUp = () => {
 	});
 
 	const { signUp, setActive, isLoaded } = useSignUp();
+
 	const [verifying, setVerifying] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -262,16 +263,6 @@ const SignUp = () => {
 				</Form>
 			</div>
 
-			<p className='text-center text-grey mt-6'>
-				Already have an account?
-				<Link href='/sign-in' className='text-purple'>
-					{' '}
-					Login
-				</Link>
-			</p>
-
-			<p className='text-center text-grey mt-6'>OR</p>
-
 			<div className='flex items-center gap-4 mt-6'>
 				<Button
 					variant={'secondary'}
@@ -316,6 +307,14 @@ const SignUp = () => {
 					GitHub
 				</Button>
 			</div>
+
+			<p className='text-center text-grey mt-6'>
+				Already have an account?
+				<Link href='/sign-in' className='text-purple'>
+					{' '}
+					Login
+				</Link>
+			</p>
 		</div>
 	);
 };

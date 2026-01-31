@@ -41,6 +41,7 @@ const SignIn = () => {
 	});
 
 	const { isLoaded, signIn, setActive } = useSignIn();
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	const router = useRouter();
@@ -163,15 +164,6 @@ const SignIn = () => {
 				</form>
 			</Form>
 
-			<p className='text-center text-grey mt-6'>
-				Don&apos;t have an account?{' '}
-				<Link href='/sign-up' className='text-purple'>
-					Create account
-				</Link>
-			</p>
-
-			<p className='text-center text-grey mt-6'>OR</p>
-
 			<div className='flex items-center gap-4 mt-6'>
 				<Button
 					variant={'secondary'}
@@ -216,6 +208,13 @@ const SignIn = () => {
 					GitHub
 				</Button>
 			</div>
+
+			<p className='text-center text-grey mt-6'>
+				Don&apos;t have an account?{' '}
+				<Link href='/sign-up' className='text-purple'>
+					Create account
+				</Link>
+			</p>
 		</div>
 	);
 };

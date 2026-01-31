@@ -5,9 +5,9 @@ import User from '@/models/users';
 import connectDB from '@/lib/db';
 
 export default async function Homepage() {
-	const user = await currentUser();
-
 	await connectDB();
+
+	const user = await currentUser();
 
 	let dbUser = await User.findOne({ clerkId: user?.id }).lean();
 
@@ -18,6 +18,7 @@ export default async function Homepage() {
 			email: user?.emailAddresses[0]?.emailAddress || '',
 			image_url: user?.imageUrl || '',
 			clerkId: user?.id || '',
+			username: user?.username || '',
 		});
 
 		dbUser = newUser.toObject();

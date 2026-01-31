@@ -14,15 +14,9 @@ export default function PreviewNavbar() {
 	const isDevelopment = process.env.NODE_ENV === 'development';
 
 	const handleLinkCopy = () => {
-		if (isDevelopment) {
-			navigator.clipboard.writeText(
-				`http://localhost:3000/profile/${user?.username}`,
-			);
-			toast.success('Link copied to clipboard!');
-			return;
-		}
-
-		navigator.clipboard.writeText(window.location.href);
+		navigator.clipboard.writeText(
+			`${window.location.origin}/profile/${user?.username}`,
+		);
 		toast.success('Link copied to clipboard!');
 	};
 
@@ -35,7 +29,7 @@ export default function PreviewNavbar() {
 						'p-4 sm:rounded-xl',
 					)}>
 					<Link href='/' className='w-full sm:w-max block'>
-						{!isDevelopment ? (
+						{isDevelopment ? (
 							<Button variant='secondary' className='w-full'>
 								Back to Editor
 							</Button>

@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
 import User from '@/models/users';
@@ -15,6 +16,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	await connectDB();
 
 	const user = await User.findOne({ username }).lean();
+
+	if (!user) {
+		return {};
+	}
 
 	return {
 		title: `${user.firstName} ${user.lastName}`,
@@ -41,6 +46,10 @@ const Profilepage = async ({
 
 	const serializedProfile = JSON.parse(JSON.stringify(user));
 	const serializedLinks = JSON.parse(JSON.stringify(userLinks));
+
+	if (!user) {
+		return notFound();
+	}
 
 	return <Preview user={serializedProfile} links={serializedLinks} />;
 };
