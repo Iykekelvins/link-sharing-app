@@ -16,6 +16,7 @@ import userProfileSchema from './schema';
 import z from 'zod';
 import Inputs from './inputs';
 import ProfilePicture from './profile-picture';
+import Email from './email';
 
 const Profile = () => {
 	const form = useForm<z.infer<typeof userProfileSchema>>({
@@ -96,31 +97,50 @@ const Profile = () => {
 				Add your details to create a personal touch to your profile.
 			</p>
 
-			<Tabs defaultValue='account' className='w-full mt-6'>
-				<TabsList variant='line'>
-					<TabsTrigger value='account' className='text-dark-grey'>
-						Account Info
-					</TabsTrigger>
-					<TabsTrigger value='email' className='text-dark-grey'>
-						Email Address
-					</TabsTrigger>
-				</TabsList>
-				<TabsContent value='account'>
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)}>
-							<ProfilePicture form={form} />
-							<Inputs form={form} />
+			{clerkUser.user?.passwordEnabled ? (
+				<Tabs defaultValue='account' className='w-full mt-6'>
+					<TabsList variant='line'>
+						<TabsTrigger value='account' className='text-dark-grey'>
+							Account Info
+						</TabsTrigger>
+						<TabsTrigger value='email' className='text-dark-grey'>
+							Email Address
+						</TabsTrigger>
+					</TabsList>
+					<TabsContent value='account'>
+						<Form {...form}>
+							<form onSubmit={form.handleSubmit(onSubmit)}>
+								<ProfilePicture form={form} />
+								<Inputs form={form} />
 
-							<div className='border-t border-t-borders border-solid flex justify-end py-6 mt-12'>
-								<Button className='w-full md:w-max' disabled={isUpdating}>
-									{isUpdating && <Spinner />}
-									<span>Save</span>
-								</Button>
-							</div>
-						</form>
-					</Form>
-				</TabsContent>
-			</Tabs>
+								<div className='border-t border-t-borders border-solid flex justify-end py-6 mt-12'>
+									<Button className='w-full md:w-max' disabled={isUpdating}>
+										{isUpdating && <Spinner />}
+										<span>Save</span>
+									</Button>
+								</div>
+							</form>
+						</Form>
+					</TabsContent>
+					<TabsContent value='email'>
+						<Email />
+					</TabsContent>
+				</Tabs>
+			) : (
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
+						<ProfilePicture form={form} />
+						<Inputs form={form} />
+
+						<div className='border-t border-t-borders border-solid flex justify-end py-6 mt-12'>
+							<Button className='w-full md:w-max' disabled={isUpdating}>
+								{isUpdating && <Spinner />}
+								<span>Save</span>
+							</Button>
+						</div>
+					</form>
+				</Form>
+			)}
 		</div>
 	);
 };

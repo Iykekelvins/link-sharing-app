@@ -31,6 +31,7 @@ export async function PATCH(
 		const firstName = formData.get('firstName') as string;
 		const lastName = formData.get('lastName') as string;
 		const username = formData.get('username') as string;
+		const email = formData.get('email') as string;
 		const profilePicture = formData.get('profilePicture') as File | null;
 
 		// validate text fields
@@ -38,6 +39,7 @@ export async function PATCH(
 			firstName,
 			lastName,
 			username,
+			email,
 		});
 
 		await connectDB();
@@ -144,6 +146,7 @@ export async function PATCH(
 				firstName: validatedData.firstName,
 				lastName: validatedData.lastName,
 				username: validatedData.username,
+				email: validatedData.email,
 				image_url: profilePictureUrl,
 				updatedAt: new Date(),
 			},

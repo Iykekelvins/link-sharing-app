@@ -4,6 +4,7 @@ const userProfileSchema = z.object({
 	firstName: z.string().min(1, "can't be empty"),
 	lastName: z.string().min(1, "can't be empty"),
 	username: z.string().min(1, "can't be empty"),
+	email: z.email('Please enter a valid email address'),
 	profilePicture: z.union([
 		z
 			.instanceof(File)
