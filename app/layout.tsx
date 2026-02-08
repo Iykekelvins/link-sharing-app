@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Instrument_Sans } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'sonner';
+import { metaDataOptions } from '@/lib/metadata';
 
 import './globals.css';
 
@@ -16,7 +17,9 @@ export const metadata: Metadata = {
 		template: 'Devlinks - %s',
 	},
 	description:
-		'Consolidate your developer presence across the web. Connect your GitHub, LinkedIn, Twitter, portfolio, and other platforms into a single, shareable profile link. Make it easy for recruiters, collaborators, and the community to find you everywhere.',
+		'A full-stack invoice management application built with Next.js, featuring Google authentication, real-time database syncing, and PDF generation capabilities.',
+	metadataBase: new URL('https://link-sharing-app-iyke.vercel.app'),
+	...metaDataOptions,
 };
 
 export default function RootLayout({
